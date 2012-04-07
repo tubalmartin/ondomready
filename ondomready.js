@@ -1,3 +1,6 @@
+/*! 
+ * onDomReady.js 1.0 (c) 2012 Tubal Martin - MIT license
+ */
 !function (definition) {
     if (typeof define === 'function' && define.amd) {
         // Register as an AMD module.
