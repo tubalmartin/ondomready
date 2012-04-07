@@ -4,6 +4,7 @@ A function that allows you to safely initialize dependent code of DOM ready stat
 
 * Bullet proof: Based on jQuery 1.7 ready() method (same behavior & reliability).
 * AMD compatible (anonymous module = more portable).
+* MIT license
 
 ## How to use:
 
