@@ -2,11 +2,10 @@
 
 A function that allows you to safely initialize your code when the DOM is ready.
 
-Since it's based on jQuery's `ready()` method, when the jQuery team improves the function I'll update onDomReady in a breeze. 
-
-* Bullet proof: Based on jQuery 1.7 ready() method (same behavior & reliability).
-* AMD compatible (anonymous module = more portable).
-* MIT license
+* **Bullet proof**: Based on jQuery's `ready()` method (same behavior & reliability).
+* Easy to maintain: Since onDomReady is based on jQuery's implementation, whenever the jQuery team improves it I'll update onDomReady.  
+* AMD compatible (anonymous module = more portable),
+* MIT license.
 
 ## How to use:
 
