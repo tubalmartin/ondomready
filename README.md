@@ -9,7 +9,7 @@ A function that allows you to safely initialize dependent code of DOM ready stat
 ## How to use:
 
 ```js
-// Functions passed to onDomReady will be executed in order as soon as the DOM is ready.
+// Functions passed to onDomReady will be executed as soon as the DOM is ready.
 
 // Execute this function ASAP
 onDomReady( function() {
