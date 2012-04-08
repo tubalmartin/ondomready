@@ -31,5 +31,5 @@ var version = onDomReady.version; // "1.0"
 
 ## Changelog
 
-**2012/05/08**  
+**2012/04/08**  
 Version 1.0: based on jQuery 1.7.2
