@@ -1,8 +1,8 @@
 /*! 
- * onDomReady.js 1.0 (c) 2012 Tubal Martin - MIT license
+ * onDomReady.js 1.1 (c) 2012 Tubal Martin - MIT license
  */
 !function (definition) {
-    if (typeof define === 'function' && define.amd) {
+    if (typeof define === "function" && define.amd) {
         // Register as an AMD module.
         define(definition);
     } else {
@@ -10,17 +10,17 @@
         window.onDomReady = definition();
     }
 }(function() {
-    var onreadystatechange = 'onreadystatechange',
-    DOMContentLoaded = 'DOMContentLoaded',
-    addEventListener = 'addEventListener',
-    attachEvent = 'attachEvent',
-    readyState = 'readyState',
-    complete = 'complete',
+    var onreadystatechange = "onreadystatechange",
+    DOMContentLoaded = "DOMContentLoaded",
+    addEventListener = "addEventListener",
+    attachEvent = "attachEvent",
+    readyState = "readyState",
+    complete = "complete",
     bfalse = false,
     win = window,
     doc = win.document,
     docElem = doc.documentElement,
-    toplevel = bfalse,
+    top = bfalse,
     
     // Callbacks pending execution until DOM is ready
     callbacks = [],
@@ -33,52 +33,36 @@
     
     // Handle when the DOM is ready
     function ready( fn ) {
-        if ( isReady ) {
-            return;
-        }
-        
-        // Make sure body exists, at least, in case IE gets a little overzealous.
-        if ( !doc.body ) {
-            return defer( ready );
-        }
-        
-        // Remember that the DOM is ready
-        isReady = true;
+        if ( !isReady ) {
+            
+            // Make sure body exists, at least, in case IE gets a little overzealous.
+            if ( !doc.body ) {
+                return defer( ready );
+            }
+            
+            // Remember that the DOM is ready
+            isReady = true;
 
-        // Execute all callbacks
-        while ( fn = callbacks.shift() ) {
-            defer( fn );
+            // Execute all callbacks
+            while ( fn = callbacks.shift() ) {
+                defer( fn );
+            }
         }    
     }
     
-    // The DOM ready check for Internet Explorer
-    function doScrollCheck() {
-        if ( isReady ) {
-            return;
-        }
-    
-        try {
-            // If IE is used, use the trick by Diego Perini
-            // http://javascript.nwbox.com/IEContentLoaded/
-            docElem.doScroll('left');
-        } catch(e) {
-            return defer( doScrollCheck );
-        }
-    
-        // and execute any waiting functions
-        ready();
-    }
-    
     // Defers a function, scheduling it to run after the current call stack has cleared.
-    function defer( fn ) {
-        win.setTimeout( fn, 1 );
+    function defer( fn, wait ) {
+        // Allow 0 to be passed
+        win.setTimeout( fn, +wait >= 0 ? wait : 1 );
     }
     
     // Attach the listeners:
+
     // Catch cases where onDomReady is called after the
     // browser event has already occurred.
-    if ( doc[readyState] === complete ) {
-        ready();
+    if ( doc[readyState] === complete || ( doc[readyState] !== "loading" && doc[addEventListener] ) ) {
+        // Handle it asynchronously to allow scripts the opportunity to delay ready
+        defer( ready );
     } else {
         // W3C event model
         if ( doc[addEventListener] ) {
@@ -91,7 +75,7 @@
             doc[addEventListener]( DOMContentLoaded, DOMContentLoadedHandler, bfalse );
     
             // A fallback to window.onload, that will always work
-            win[addEventListener]( 'load', ready, bfalse );
+            win[addEventListener]( "load", ready, bfalse );
     
         // IE event model
         } else if ( doc[attachEvent] ) {
@@ -107,16 +91,30 @@
             doc[attachEvent]( onreadystatechange, DOMContentLoadedHandler );
     
             // A fallback to window.onload, that will always work
-            win[attachEvent]( 'onload', ready );
+            win[attachEvent]( "onload", ready );
     
             // If IE and not a frame
             // continually check to see if the document is ready
             try {
-                toplevel = win.frameElement == null;
+                top = win.frameElement == null && docElem;
             } catch(e) {}
-    
-            if ( docElem.doScroll && toplevel ) {
-                doScrollCheck();
+
+            if ( top && top.doScroll ) {
+                (function doScrollCheck() {
+                    if ( !isReady ) {
+
+                        try {
+                            // Use the trick by Diego Perini
+                            // http://javascript.nwbox.com/IEContentLoaded/
+                            top.doScroll("left");
+                        } catch(e) {
+                            return defer( doScrollCheck, 50 );
+                        }
+
+                        // and execute any waiting functions
+                        ready();
+                    }
+                })();
             }
         }
     } 
@@ -127,7 +125,7 @@
     }
     
     // Add version
-    onDomReady.version = '1.0';
+    onDomReady.version = "1.1";
     
     return onDomReady;
 });

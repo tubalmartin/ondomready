@@ -18,7 +18,7 @@
         log = function(msg){
             count++;
             var console = document.getElementById('console');
-            console.innerHTML += count +'. '+ msg + '\n';
+            console.innerHTML += count +'. '+ msg + '<br>';
         };
         
         onDomReady(function(){
@@ -30,7 +30,7 @@
         onDomReady(function(){
             log('Callback 3 executed!');
             onDomReady(function(){
-                log('Callback 4 executed! Out of order? It\'s OK, execution is async!');
+                log('Callback 4 executed! Out of order? It\'s OK, I\'m executed inside Callback 3 and execution is async!');
             });
         });
     </script>
