@@ -1,5 +1,5 @@
 /*! 
- * onDomReady.js 1.1 (c) 2012 Tubal Martin - MIT license
+ * onDomReady.js 1.2 (c) 2012 Tubal Martin - MIT license
  */
 !function (definition) {
     if (typeof define === "function" && define.amd) {
@@ -10,6 +10,9 @@
         window.onDomReady = definition();
     }
 }(function() {
+    
+    'use strict';
+
     var win = window,
         doc = win.document,
         docElem = doc.documentElement,
@@ -36,7 +39,7 @@
     function ready( fn ) {
         if ( !isReady ) {
             
-            // Make sure body exists, at least, in case IE gets a little overzealous.
+            // Make sure body exists, at least, in case IE gets a little overzealous (ticket #5443).
             if ( !doc.body ) {
                 return defer( ready );
             }
@@ -72,52 +75,52 @@
     
     // Attach the listeners:
 
-    // Catch cases where onDomReady is called after the
-    // browser event has already occurred.
-    if ( doc[READYSTATE] === COMPLETE || ( doc[READYSTATE] !== "loading" && w3c ) ) {
+    // Catch cases where onDomReady is called after the browser event has already occurred.
+    // we once tried to use readyState "interactive" here, but it caused issues like the one
+    // discovered by ChrisS here: http://bugs.jquery.com/ticket/12282#comment:15
+    if ( doc[READYSTATE] === COMPLETE ) {
         // Handle it asynchronously to allow scripts the opportunity to delay ready
         defer( ready );
-    } else {
-        // W3C event model
-        if ( w3c ) {
-            // Use the handy event callback
-            doc[ADDEVENTLISTENER]( DOMCONTENTLOADED, DOMContentLoadedHandler, FALSE );
-    
-            // A fallback to window.onload, that will always work
-            win[ADDEVENTLISTENER]( "load", ready, FALSE );
-    
-        // IE event model
-        } else if ( doc[ATTACHEVENT] ) {            
-            // ensure firing before onload,
-            // maybe late but safe also for iframes
-            doc[ATTACHEVENT]( ONREADYSTATECHANGE, DOMContentLoadedHandler );
-    
-            // A fallback to window.onload, that will always work
-            win[ATTACHEVENT]( "onload", ready );
-    
-            // If IE and not a frame
-            // continually check to see if the document is ready
-            try {
-                top = win.frameElement == null && docElem;
-            } catch(e) {}
 
-            if ( top && top.doScroll ) {
-                (function doScrollCheck() {
-                    if ( !isReady ) {
-                        try {
-                            // Use the trick by Diego Perini
-                            // http://javascript.nwbox.com/IEContentLoaded/
-                            top.doScroll("left");
-                        } catch(e) {
-                            return defer( doScrollCheck, 50 );
-                        }
+    // Standards-based browsers support DOMContentLoaded    
+    } else if ( w3c ) {
+        // Use the handy event callback
+        doc[ADDEVENTLISTENER]( DOMCONTENTLOADED, DOMContentLoadedHandler, FALSE );
 
-                        // and execute any waiting functions
-                        ready();
+        // A fallback to window.onload, that will always work
+        win[ADDEVENTLISTENER]( "load", ready, FALSE );
+
+    // If IE event model is used
+    } else {            
+        // ensure firing before onload,
+        // maybe late but safe also for iframes
+        doc[ATTACHEVENT]( ONREADYSTATECHANGE, DOMContentLoadedHandler );
+
+        // A fallback to window.onload, that will always work
+        win[ATTACHEVENT]( "onload", ready );
+
+        // If IE and not a frame
+        // continually check to see if the document is ready
+        try {
+            top = win.frameElement == null && docElem;
+        } catch(e) {}
+
+        if ( top && top.doScroll ) {
+            (function doScrollCheck() {
+                if ( !isReady ) {
+                    try {
+                        // Use the trick by Diego Perini
+                        // http://javascript.nwbox.com/IEContentLoaded/
+                        top.doScroll("left");
+                    } catch(e) {
+                        return defer( doScrollCheck, 50 );
                     }
-                })();
-            }
-        }
+
+                    // and execute any waiting functions
+                    ready();
+                }
+            })();
+        } 
     } 
     
     function onDomReady( fn ) { 
@@ -126,7 +129,7 @@
     }
     
     // Add version
-    onDomReady.version = "1.1";
+    onDomReady.version = "1.2";
     
     return onDomReady;
 });
