@@ -1,5 +1,5 @@
 /*! 
- * onDomReady.js 1.2 (c) 2012 Tubal Martin - MIT license
+ * onDomReady.js 1.3 (c) 2013 Tubal Martin - MIT license
  */
 !function (definition) {
     if (typeof define === "function" && define.amd) {
@@ -17,13 +17,17 @@
         doc = win.document,
         docElem = doc.documentElement,
 
+        LOAD = "load",
         FALSE = false,
+        ONLOAD = "on"+LOAD,
         COMPLETE = "complete",
         READYSTATE = "readyState",
         ATTACHEVENT = "attachEvent",
+        DETACHEVENT = "detachEvent",
         ADDEVENTLISTENER = "addEventListener",
         DOMCONTENTLOADED = "DOMContentLoaded",
         ONREADYSTATECHANGE = "onreadystatechange",
+        REMOVEEVENTLISTENER = "removeEventListener",
 
         // W3C Event model
         w3c = ADDEVENTLISTENER in doc,
@@ -54,16 +58,23 @@
         }    
     }
 
-    // The document ready event handler
-    function DOMContentLoadedHandler() {
+    // The ready event handler
+    function completed( event ) {
+        // readyState === "complete" is good enough for us to call the dom ready in oldIE
+        if ( w3c || event.type === LOAD || doc[READYSTATE] === COMPLETE ) {
+            detach();
+            ready();
+        }
+    }
+
+    // Clean-up method for dom ready events
+    function detach() {
         if ( w3c ) {
-            doc.removeEventListener( DOMCONTENTLOADED, DOMContentLoadedHandler, FALSE );
-            ready();
-        } else if ( doc[READYSTATE] === COMPLETE ) {
-            // we're here because readyState === "complete" in oldIE
-            // which is good enough for us to call the dom ready!
-            doc.detachEvent( ONREADYSTATECHANGE, DOMContentLoadedHandler );
-            ready();
+            doc[REMOVEEVENTLISTENER]( DOMCONTENTLOADED, completed, FALSE );
+            win[REMOVEEVENTLISTENER]( LOAD, completed, FALSE );
+        } else {
+            doc[DETACHEVENT]( ONREADYSTATECHANGE, completed );
+            win[DETACHEVENT]( ONLOAD, completed );
         }
     }
     
@@ -85,19 +96,18 @@
     // Standards-based browsers support DOMContentLoaded    
     } else if ( w3c ) {
         // Use the handy event callback
-        doc[ADDEVENTLISTENER]( DOMCONTENTLOADED, DOMContentLoadedHandler, FALSE );
+        doc[ADDEVENTLISTENER]( DOMCONTENTLOADED, completed, FALSE );
 
         // A fallback to window.onload, that will always work
-        win[ADDEVENTLISTENER]( "load", ready, FALSE );
+        win[ADDEVENTLISTENER]( LOAD, completed, FALSE );
 
     // If IE event model is used
     } else {            
-        // ensure firing before onload,
-        // maybe late but safe also for iframes
-        doc[ATTACHEVENT]( ONREADYSTATECHANGE, DOMContentLoadedHandler );
+        // Ensure firing before onload, maybe late but safe also for iframes
+        doc[ATTACHEVENT]( ONREADYSTATECHANGE, completed );
 
         // A fallback to window.onload, that will always work
-        win[ATTACHEVENT]( "onload", ready );
+        win[ATTACHEVENT]( ONLOAD, completed );
 
         // If IE and not a frame
         // continually check to see if the document is ready
@@ -116,6 +126,9 @@
                         return defer( doScrollCheck, 50 );
                     }
 
+                    // detach all dom ready events
+                    detach();
+
                     // and execute any waiting functions
                     ready();
                 }
@@ -129,7 +142,7 @@
     }
     
     // Add version
-    onDomReady.version = "1.2";
+    onDomReady.version = "1.3";
     
     return onDomReady;
 });

@@ -26,10 +26,13 @@ var init = function() {
 onDomReady( init );
 
 // Get the version of onDomReady (string)
-var version = onDomReady.version; // "1.2"
+var version = onDomReady.version; // "1.3"
 ```
 
 ## Changelog
+
+**13 Jun 2013**  
+Version 1.3: based on jQuery 1.10.1
 
 **18 Sep 2012**  
 Version 1.2: based on jQuery 1.8.1
