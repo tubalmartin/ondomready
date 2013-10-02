@@ -1,5 +1,5 @@
 /*! 
- * onDomReady.js 1.3 (c) 2013 Tubal Martin - MIT license
+ * onDomReady.js 1.3.1 (c) 2013 Tubal Martin - MIT license
  */
 !function (definition) {
     if (typeof define === "function" && define.amd) {
@@ -7,7 +7,7 @@
         define(definition);
     } else {
         // Browser globals
-        window.onDomReady = definition();
+        window['onDomReady'] = definition();
     }
 }(function() {
     
