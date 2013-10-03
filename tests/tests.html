@@ -12,14 +12,27 @@
         pre{color:#333;display:block;padding:8.5px;margin:0 0 9px;font-family:Menlo,Monaco,Consolas,Courier,"Courier New",monospace;font-size:12px;line-height:18px;background-color:whiteSmoke;border:1px solid #CCC;border:1px solid rgba(0,0,0,.15);-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;white-space:pre;white-space:pre-wrap;word-break:break-all;word-wrap:break-word}
     </style>
     <!-- Include onDomReady --> 
-    <script type="text/javascript" src="../ondomready.js"></script>
+    <script type="text/javascript" src="../ondomready.min.js"></script>
     <script type="text/javascript">
-        var count = 0,
-        log = function(msg){
-            count++;
-            var console = document.getElementById('console');
-            console.innerHTML += count +'. '+ msg + '<br>';
-        };
+        var log = function(msg){
+                var _msg;
+                log.console = log.console || document.getElementById('console');
+                log.messages.push(msg);
+
+                if (log.console) {
+                    while (_msg = log.messages.shift()) {
+                        log.count++;
+                        log.console.innerHTML += log.count +'. '+ _msg + '<br>';
+                    }
+                }
+            };
+            log.count = 0;
+            log.console = null;
+            log.messages = [];
+
+        log('onDomReady version: ' + onDomReady.version);    
+
+        log('Is DOM ready now? ' + onDomReady.isReady());
         
         onDomReady(function(){
             log('Callback 1 executed!');
@@ -28,6 +41,7 @@
             log('Callback 2 executed!');
         });
         onDomReady(function(){
+            log('Is DOM ready now???? ' + onDomReady.isReady());
             log('Callback 3 executed!');
             onDomReady(function(){
                 log('Callback 4 executed! Out of order? It\'s OK, I\'m executed inside Callback 3 and execution is async!');
@@ -38,6 +52,7 @@
 <body>
     
     <script type="text/javascript">
+        log('Is DOM ready now?? ' + onDomReady.isReady());
         onDomReady(function(){
             log('Callback 5 executed!');
         });
@@ -64,7 +79,9 @@
         
         onDomReady(function(){
             log('Callback 8 executed!');
-        });    
+        });
+
+        log('Is DOM ready now??? ' + onDomReady.isReady());    
     </script>
     
 </body>

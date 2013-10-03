@@ -28,6 +28,9 @@ onDomReady( init );
 
 // Get the version of onDomReady (string)
 var version = onDomReady.version; // "1.3.1"
+
+// Check at anytime whether DOM is ready
+onDomReady.isReady(); // returns true or false (version 1.3.1+)
 ```
 
 ## Changelog

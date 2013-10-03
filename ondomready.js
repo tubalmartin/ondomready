@@ -1,7 +1,7 @@
 /*! 
- * onDomReady.js 1.3.1 (c) 2013 Tubal Martin - MIT license
+ * onDomReady.js 1.4.0 (c) 2013 Tubal Martin - MIT license
  */
-!function (definition) {
+;(function (definition) {
     if (typeof define === "function" && define.amd) {
         // Register as an AMD module.
         define(definition);
@@ -142,7 +142,11 @@
     }
     
     // Add version
-    onDomReady.version = "1.3";
+    onDomReady.version = "1.4.0";
+    // Add method to check if DOM is ready
+    onDomReady.isReady = function(){
+        return isReady;
+    };
     
     return onDomReady;
-});
+}));
