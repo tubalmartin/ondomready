@@ -27,16 +27,16 @@ var init = function() {
 onDomReady( init );
 
 // Get the version of onDomReady (string)
-var version = onDomReady.version; // "1.3.1"
+var version = onDomReady.version; // "1.4.0"
 
 // Check at anytime whether DOM is ready
-onDomReady.isReady(); // returns true or false (version 1.3.1+)
+onDomReady.isReady(); // returns true or false (version 1.4.0+)
 ```
 
 ## Changelog
 
 **3 Oct 2013**  
-Version 1.3.1: based on jQuery 1.10.x but keeping support for IE6+
+Version 1.4.0: based on jQuery 1.10.x but keeping support for IE6+
 
 **13 Jun 2013**  
 Version 1.3: based on jQuery 1.10.x but keeping support for IE6+
